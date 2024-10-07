@@ -1,5 +1,4 @@
-import { useState } from 'react'
-
+import { useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from '@/utils/supabase.ts'
 import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
@@ -13,17 +12,25 @@ import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { authInputSchema, type AuthFormInput } from '../../types/AuthFormInput.ts'
 import { useForm, Controller } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { authInputSchema, type AuthFormInput } from '../../types/AuthFormInput.ts'
 
 const theme = createTheme()
 
-const SignUp = () => {
-  const [error, setError] = useState<string | null>(null)
+type State = {
+  redirectPath?: string
+}
+
+const SignIn = () => {
+  const location = useLocation()
+  const state = location?.state as State
   const navigate = useNavigate()
 
-  const { handleSubmit, control } = useForm<AuthFormInput>({
+  const {
+    handleSubmit,
+    control,
+    formState: { errors }
+  } = useForm<AuthFormInput>({
     resolver: zodResolver(authInputSchema),
     defaultValues: {
       email: '',
@@ -31,17 +38,18 @@ const SignUp = () => {
     }
   })
 
-  const handleSignUp = async (data: AuthFormInput) => {
+  const handleSignIn = async (data: AuthFormInput) => {
     const { email, password } = data
-    const { error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
       password
     })
 
     if (error) {
-      setError(error.message)
+      alert(error.message)
     } else {
-      navigate('/dashboard')
+      const redirectPath = state?.redirectPath
+      navigate(redirectPath || '/dashboard')
     }
   }
 
@@ -61,14 +69,24 @@ const SignUp = () => {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component='h1' variant='h4'>
-            サインアップ
+            ログイン
           </Typography>
-          <Box component='form' noValidate sx={{ mt: 1 }} onSubmit={handleSubmit(handleSignUp)}>
+          <Box component='form' noValidate sx={{ mt: 1 }} onSubmit={handleSubmit(handleSignIn)}>
             <Controller
               name='email'
               control={control}
               render={({ field }) => (
-                <TextField margin='normal' fullWidth label='メールアドレス' autoComplete='email' autoFocus {...field} />
+                <TextField
+                  {...field}
+                  margin='normal'
+                  fullWidth
+                  id='email'
+                  label='メールアドレス'
+                  autoComplete='email'
+                  autoFocus
+                  error={!!errors.email}
+                  helperText={errors.email ? errors.email.message : ''}
+                />
               )}
             />
             <Controller
@@ -76,27 +94,37 @@ const SignUp = () => {
               control={control}
               render={({ field }) => (
                 <TextField
+                  {...field}
                   margin='normal'
                   fullWidth
+                  name='password'
                   label='パスワード'
                   type='password'
+                  id='password'
                   autoComplete='current-password'
-                  {...field}
+                  error={!!errors.password}
+                  helperText={errors.password ? errors.password.message : ''}
                 />
               )}
             />
-            {error && (
-              <Typography color='error' align='center'>
-                {error}
-              </Typography>
-            )}
-            <Button type='submit' fullWidth variant='contained' sx={{ mt: 3, mb: 2 }}>
-              サインアップ
+            <Button
+              type='submit'
+              fullWidth
+              variant='contained'
+              sx={{ mt: 3, mb: 2 }}
+              disabled={!!errors.email || !!errors.password}
+            >
+              ログイン
             </Button>
             <Grid container>
+              <Grid item xs>
+                <Link href='/password-reset' variant='body2'>
+                  パスワードをお忘れですか？
+                </Link>
+              </Grid>
               <Grid item>
-                <Link href='/login' variant='body2'>
-                  {'アカウントを持っている場合'}
+                <Link href='/signup' variant='body2'>
+                  {'アカウントを作成する'}
                 </Link>
               </Grid>
             </Grid>
@@ -107,4 +135,4 @@ const SignUp = () => {
   )
 }
 
-export default SignUp
+export default SignIn

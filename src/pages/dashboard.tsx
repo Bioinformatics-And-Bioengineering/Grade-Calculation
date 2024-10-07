@@ -3,25 +3,28 @@ import { Link } from 'react-router-dom'
 // import Calculator2 from './calculator2'
 
 function Dashboard() {
-    return (
-        <div>
-            <header>
-                <h1>計算サイト</h1>
-                <h2>このページでは以下の計算を行うことができます。</h2>
-            </header>
+  return (
+    <div>
+      <header>
+        <h1>計算サイト</h1>
+        <h2>このページでは以下の計算を行うことができます。</h2>
+      </header>
 
-            <nav>
-                <ul>
-                    <li>
-                        <Link to="/calculator1">各成績計算</Link>
-                    </li>
-                    <li>
-                        <Link to="/calculator2">GPA計算</Link>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    )
+      <nav>
+        <ul>
+          <li>
+            <Link to="/calculator1">各成績計算</Link>
+          </li>
+          <li>
+            <Link to="/calculator2">GPA計算</Link>
+          </li>
+          <li>
+            <Link to="/test">中間・期末テスト</Link>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  )
 }
 
 export default Dashboard

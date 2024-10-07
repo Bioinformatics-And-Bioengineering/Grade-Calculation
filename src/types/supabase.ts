@@ -9,7 +9,89 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      subjects: {
+        Row: {
+          id: string
+          max_score: number
+          score: number
+          subject_name: string
+          test_id: string | null
+        }
+        Insert: {
+          id?: string
+          max_score: number
+          score: number
+          subject_name: string
+          test_id?: string | null
+        }
+        Update: {
+          id?: string
+          max_score?: number
+          score?: number
+          subject_name?: string
+          test_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subjects_test_id_fkey"
+            columns: ["test_id"]
+            isOneToOne: false
+            referencedRelation: "tests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      terms: {
+        Row: {
+          id: string
+          term_name: string
+        }
+        Insert: {
+          id?: string
+          term_name: string
+        }
+        Update: {
+          id?: string
+          term_name?: string
+        }
+        Relationships: []
+      }
+      tests: {
+        Row: {
+          id: string
+          term_id: string | null
+          test_name: string
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          term_id?: string | null
+          test_name: string
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          term_id?: string | null
+          test_name?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tests_term_id_fkey"
+            columns: ["term_id"]
+            isOneToOne: false
+            referencedRelation: "terms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tests_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
