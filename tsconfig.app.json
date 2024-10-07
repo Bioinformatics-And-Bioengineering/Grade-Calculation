@@ -18,7 +18,13 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /* Path Aliases */
+    "baseUrl": ".", // プロジェクトのルートディレクトリを基準に設定
+    "paths": {
+      "@/*": ["src/*"] // @/をsrc/にマッピング
+    }
   },
   "include": ["src"]
 }
